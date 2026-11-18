@@ -66,6 +66,7 @@ module "container_apps" {
   subnet_id                  = module.networking.aca_subnet_id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.main.id
   identity_id                = data.azurerm_user_assigned_identity.app.id
+  public_network_access      = var.front_door_enabled ? "Disabled" : "Enabled"
   image                      = "${data.azurerm_container_registry.acr.login_server}/solidsnake@${var.image_digest}"
   acr_login_server           = data.azurerm_container_registry.acr.login_server
   signing_key_secret_id      = module.keyvault.signing_key_secret_id
@@ -77,6 +78,7 @@ module "container_apps" {
 
 module "frontdoor" {
   source = "./modules/frontdoor"
+  count  = var.front_door_enabled ? 1 : 0
 
   name                       = local.name
   resource_group_name        = local.rg

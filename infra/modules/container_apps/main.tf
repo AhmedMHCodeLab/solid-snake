@@ -5,8 +5,7 @@ resource "azurerm_container_app_environment" "env" {
   infrastructure_subnet_id   = var.subnet_id
   logs_destination           = "log-analytics"
   log_analytics_workspace_id = var.log_analytics_workspace_id
-  # Reached only through Front Door Private Link.
-  public_network_access = "Disabled"
+  public_network_access      = var.public_network_access
 
   workload_profile {
     name                  = "Consumption"

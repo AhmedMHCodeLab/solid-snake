@@ -29,6 +29,12 @@ variable "image_digest" {
   }
 }
 
+variable "front_door_enabled" {
+  description = "Serve through Front Door Premium with WAF over Private Link. When false the app is served on its own Container Apps address."
+  type        = bool
+  default     = true
+}
+
 variable "waf_mode" {
   description = "WAF mode: Detection or Prevention."
   type        = string

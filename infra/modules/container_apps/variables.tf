@@ -28,6 +28,11 @@ variable "identity_id" {
   type        = string
 }
 
+variable "public_network_access" {
+  description = "Enabled serves the app on its Container Apps address; Disabled leaves only Front Door Private Link."
+  type        = string
+}
+
 variable "acr_login_server" {
   description = "Login server of the container registry."
   type        = string
