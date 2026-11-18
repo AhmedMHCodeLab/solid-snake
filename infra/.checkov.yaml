@@ -1,0 +1,30 @@
+framework:
+  - terraform
+skip-check:
+  # Storage: no queues or blobs are used by the platform; the audit share is SMB only
+  - CKV_AZURE_33
+  - CKV2_AZURE_21
+  # azurerm 5 uses public_network_access = "Disabled"; the check still reads the removed boolean
+  # The state account must accept GitHub runners; it is Entra-only, shared keys off
+  - CKV_AZURE_59
+  - CKV2_AZURE_33
+  # ZRS is enough for synthetic data that lives one demo
+  - CKV_AZURE_206
+  # Platform-managed encryption keys are enough for synthetic data
+  - CKV2_AZURE_1
+  # The SMB mount authenticates with the account key until identity mounts are GA (ADR 0006); no SAS is issued
+  - CKV2_AZURE_40
+  - CKV2_AZURE_41
+  # The share and vault are destroyed with the demo by design (ADR 0003)
+  - CKV2_AZURE_38
+  - CKV_AZURE_110
+  - CKV_AZURE_42
+  # Registry is Basic: these need Premium; images are scanned by Trivy in build.yml and pulled by identity (ADR 0009)
+  - CKV_AZURE_139
+  - CKV_AZURE_163
+  - CKV_AZURE_164
+  - CKV_AZURE_165
+  - CKV_AZURE_166
+  - CKV_AZURE_167
+  - CKV_AZURE_233
+  - CKV_AZURE_237
