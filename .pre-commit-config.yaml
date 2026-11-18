@@ -1,0 +1,52 @@
+default_stages: [pre-commit]
+
+repos:
+
+  # Tier 1: Near-zero-cost hygiene
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=500]
+
+  # Tier 2: Secrets detection
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
+
+  # Tier 3: Dockerfile linting
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.14.0
+    hooks:
+      - id: hadolint
+        args: [--failure-threshold, error]
+
+  # Tier 4: GitHub Actions linting
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.11
+    hooks:
+      - id: actionlint
+
+  # Tier 5: Terraform formatting and linting
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.105.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_tflint
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+
+  # Tier 6: IaC security scanning
+  - repo: https://github.com/bridgecrewio/checkov
+    rev: 3.2.508
+    hooks:
+      - id: checkov
+        args:
+          - --directory=infra
+          - --framework=terraform
+          - --quiet
