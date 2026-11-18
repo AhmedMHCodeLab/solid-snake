@@ -56,4 +56,4 @@ jobs:
         run: terraform init -backend-config="env/${ENV}.backend.hcl" -backend-config="storage_account_name=${{ vars.TFSTATE_STORAGE_ACCOUNT }}"
 
       - name: Destroy
-        run: terraform destroy -auto-approve -var-file="env/${ENV}.tfvars" -var="image_digest=sha256:0000000000000000000000000000000000000000000000000000000000000000"
+        run: terraform destroy -auto-approve -var-file="env/${ENV}.tfvars" -var="acr_name=${{ vars.ACR_NAME }}" -var="image_digest=sha256:0000000000000000000000000000000000000000000000000000000000000000"
