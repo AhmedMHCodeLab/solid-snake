@@ -48,10 +48,11 @@ ephemeral "random_password" "signing_key" {
   special = false
 }
 
-resource "azapi_resource" "signing_key" {
-  type      = "Microsoft.KeyVault/vaults/secrets@2026-05-15"
-  name      = "audit-hmac-key"
-  parent_id = azurerm_key_vault.kv.id
+# ARM has no delete for vault secrets (405), so an action writes it: destroy makes no call and the vault delete removes it.
+resource "azapi_resource_action" "signing_key" {
+  type        = "Microsoft.KeyVault/vaults/secrets@2026-05-15"
+  resource_id = "${azurerm_key_vault.kv.id}/secrets/audit-hmac-key"
+  method      = "PUT"
 
   body = {
     properties = {}
