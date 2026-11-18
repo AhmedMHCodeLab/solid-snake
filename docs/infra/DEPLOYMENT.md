@@ -4,36 +4,27 @@ Four workflows: `ci` (pull request), `build` (push to main), `infra-up` and `inf
 
 ## 1. Bootstrap once
 
-Local, with your own `az login`. This creates:
+Local, with your own `az login` and a GitHub token (`gh auth login` first). This creates:
+- the GitHub repository itself, with its environments `dev`, `staging` and `prod` and the five variables the workflows use;
 - the state storage;
 - the registry;
 - the environment resource groups;
 - the app and CI identities;
 - the budgets.
 
-Its own state stays local: this layer is created once by hand.
+Its own state stays local: this layer is created once by hand. If the repository already exists, import it before the first apply:
+`terraform -chdir=infra/bootstrap import -var="github_repository=<owner>/<repo>" -var="budget_email=<you@example.com>" github_repository.repo <repo>`
 
-```powershell
+```bash
 az login
+az account set --subscription <subscription id>
+export GITHUB_TOKEN=$(gh auth token)
 terraform -chdir=infra/bootstrap init
 # -parallelism=1: Azure rejects concurrent federated credential writes on one identity
 terraform -chdir=infra/bootstrap apply -parallelism=1 -var="github_repository=<owner>/<repo>" -var="budget_email=<you@example.com>"
-terraform -chdir=infra/bootstrap output
 ```
 
-Set the five repository variables (Settings, Secrets and variables, Actions, Variables):
-
-| Variable | Source |
-|---|---|
-| AZURE_CLIENT_ID | output `azure_client_id` |
-| AZURE_TENANT_ID | `az account show --query tenantId -o tsv` |
-| AZURE_SUBSCRIPTION_ID | `az account show --query id -o tsv` |
-| ACR_NAME | output `acr_name` |
-| TFSTATE_STORAGE_ACCOUNT | output `tfstate_storage_account` |
-
-Put the same ACR name in `acr_name` in `infra/env/*.tfvars`.
-
-Create the GitHub environments `dev`, `staging` and `prod` (Settings, Environments). Add required reviewers to `prod`.
+Then add required reviewers to the `prod` environment (Settings, Environments).
 
 ## 2. Build an image
 

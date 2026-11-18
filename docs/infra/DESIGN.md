@@ -18,7 +18,8 @@ Visitor -> Front Door Premium + WAF (default *.azurefd.net link)
 ```
 infra/
   bootstrap/   run once by hand: state account, registry, one resource group per environment,
-               the app identity and its access, the CI identity and its GitHub credentials, budgets
+               the app identity and its access, the CI identity and its GitHub credentials, budgets,
+               plus the GitHub environments and repository variables the workflows read
   main.tf      the platform: Log Analytics plus the five modules below
   env/         <env>.tfvars and <env>.backend.hcl (one state per environment)
   modules/
