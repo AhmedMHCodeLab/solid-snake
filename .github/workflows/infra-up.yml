@@ -97,6 +97,7 @@ jobs:
 
       - name: Approve Front Door private link
         run: |
+          [ "$(terraform output -raw front_door_enabled)" = "true" ] || exit 0
           env_id=$(terraform output -raw container_app_environment_id)
           for id in $(az network private-endpoint-connection list --id "$env_id" --query "[?properties.privateLinkServiceConnectionState.status=='Pending'].id" -o tsv); do
             az network private-endpoint-connection approve --id "$id" --description "Approved by infra-up"
