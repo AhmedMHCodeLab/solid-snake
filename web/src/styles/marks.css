@@ -1,0 +1,82 @@
+/*
+ * MARKS. The level marks, the lacuna bracket, the level line and the basis label.
+ * The evidence level of a claim is carried by three things together: the numeral, the level name in words, and the shape.
+ * Colour and brightness never carry it.
+ *
+ * CONTRACT (markup comes from src/ui/marks.ts)
+ *   .mk                     level mark SVG. .mk--l1 .. .mk--l5; state modifiers .mk--fallen .mk--awaiting .mk--unsignable
+ *                           size modifiers .mk--xs (16px and below, heavier strokes) .mk--sm (to 28px) .mk--lg (56px and up, finer strokes)
+ *   .mk__tick .mk__rule .mk__rule2 .mk__tie .mk__frame .mk__rival .mk__close .mk__sign .mk__strike
+ *                           one element per stroke. .is-new marks strokes added by a rise. Animate those (draw or reveal), never the whole mark.
+ *   .lacuna                 "expected, not observed": brackets around an empty hatched slot. .lacuna__bracket .lacuna__slot
+ *   .levelline              inline row: mark + numeral + name. .levelline__num .levelline__name. .levelline--hyp sets the name in italic
+ *   .basis                  provenance label, text in mono caps. data-basis="FACT|RESEARCH|PRACTICE|ASSUMPTION|FICTION|PROPOSAL".
+ *                           Established bases (FACT, RESEARCH, PRACTICE) have a solid frame; ASSUMPTION, FICTION, PROPOSAL a dashed one.
+ *   .tally                  strip of five level counts and one lacuna count (catalogue head).
+ * Marks are drawn in currentColor (ink on paper), --construction (derived strokes) and --oxide (sign-off only).
+ */
+.mk {
+  --k: 1;
+  flex: none;
+  display: inline-block;
+  overflow: visible;
+  fill: none;
+  color: var(--ink);
+  stroke: currentColor;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  vertical-align: middle;
+}
+.mk--xs { --k: 1.55; }
+.mk--sm { --k: 1.2; }
+.mk--lg { --k: 0.8; }
+.mk__tick { stroke-width: calc(3px * var(--k)); }
+.mk__rule, .mk__rule2, .mk__tie { stroke: var(--construction); stroke-width: calc(1.7px * var(--k)); }
+.mk__rival, .mk__close { stroke-width: calc(2.2px * var(--k)); }
+.mk__frame { stroke-width: calc(2.2px * var(--k)); }
+.mk__frame--dashed { stroke-dasharray: 5 3.5; }
+.mk__frame--broken { stroke-dasharray: 3 8; }
+.mk__frame--dotted { stroke-dasharray: 0.1 5.5; stroke-linecap: round; stroke-width: calc(2.6px * var(--k)); }
+.mk__frame--solid { stroke-width: calc(2.8px * var(--k)); }
+.mk__sign { stroke: var(--oxide); stroke-width: calc(3px * var(--k)); }
+.mk__sign--barred { stroke: var(--graphite); stroke-width: calc(2.2px * var(--k)); }
+.mk__strike { stroke-width: calc(2.6px * var(--k)); }
+.mk--awaiting { color: var(--graphite); }
+
+.lacuna { flex: none; display: inline-block; fill: none; stroke: var(--fg, currentColor); stroke-width: 1.6; vertical-align: middle; }
+.lacuna__slot { stroke: none; }
+.lacuna__bracket { stroke-linecap: butt; }
+
+.levelline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  min-width: 0;
+  font-family: var(--font-serif);
+  line-height: 1.2;
+}
+.levelline__num {
+  font: 500 0.82em/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  padding: 0.18em 0.42em 0.1em;
+  border: 1.5px solid currentColor;
+}
+.levelline__name { font-weight: var(--wt, 440); }
+.levelline--hyp .levelline__name { font-style: italic; }
+
+.basis {
+  display: inline-block;
+  font: 500 var(--fs-micro)/1.2 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.28em 0.5em 0.2em;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+.basis[data-basis='ASSUMPTION'], .basis[data-basis='FICTION'], .basis[data-basis='PROPOSAL'] { border-style: dashed; }
+
+.tally { display: grid; grid-template-columns: repeat(6, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.tally__cell { display: grid; justify-items: center; gap: 2px; padding: var(--s2) 0 var(--s2); font: 400 var(--fs-micro)/1 var(--font-mono); }
+.tally__cell + .tally__cell { border-left: 1px solid var(--line); }
+.tally__n { font: 500 var(--fs-small)/1 var(--font-mono); font-variant-numeric: tabular-nums; }
+.tally__k { color: var(--fg-2); letter-spacing: 0.08em; }

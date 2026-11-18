@@ -1,0 +1,167 @@
+/*
+ * BASE. Reset, typography, focus, skip link, grid, surfaces.
+ *
+ * CONTRACT
+ *   Surfaces     .on-wall (default for body) and .on-paper. Both set --fg --fg-2 --line --line-strong --focus and color.
+ *   Artefact     .artefact (and .card): a paper sheet with cast shadow. .slip (and .claim): a flat paper label. --lit tweens it between lit paper and the same sheet at --paper-dim.
+ *   Type         .t-display .t-h1 .t-h2 .t-h3 .t-lede .t-body .t-small .t-label (mono caps) .t-micro .t-hyp (italic: hypotheses)
+ *                .prose (wall text, 58ch measure)  .v (a value quoted from a record: mono inside serif prose)
+ *                .settle (font-weight follows --wt; tween --wt from var(--wt-open) to var(--wt-set) when a level is reached)
+ *   Grid         .wrap (page margins, max width)  .grid (12 columns)  .col-1 .. .col-12 and .start-1 .. .start-12 (apply from 820px up;
+ *                below 820px every .col-N is full width)
+ *   Utilities    .sr-only  .skip (skip link, first focusable element)  [hidden]
+ *   Focus        :focus-visible draws a 2px ring in --focus with a 3px offset. Never remove it.
+ * Nothing here transitions. Hover, focus, open and close are instant.
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  font-family: var(--font-serif);
+  font-size: 100%;
+  line-height: var(--lh-body);
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  margin: 0;
+  min-height: 100svh;
+  font-size: var(--fs-body);
+  background: var(--wall);
+  color: var(--wall-text);
+  overflow-x: hidden;
+}
+h1, h2, h3, h4, p, ul, ol, dl, dd, figure, blockquote { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+img, svg, canvas { display: block; max-width: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; margin: 0; }
+button { cursor: pointer; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+::selection { background: var(--wall-text); color: var(--wall); }
+[hidden] { display: none !important; }
+
+/* Surfaces */
+.on-wall, body, [data-theme] {
+  --surface: var(--wall);
+  --fg: var(--wall-text);
+  --fg-2: var(--wall-dim);
+  --line: var(--wall-rule);
+  --line-strong: var(--wall-rule-strong);
+  --focus: var(--wall-text);
+}
+.on-paper, .artefact, .card, .slip, .claim, .catalogue__sheet {
+  --surface: var(--paper);
+  --fg: var(--ink);
+  --fg-2: var(--graphite);
+  --line: var(--rule);
+  --line-strong: var(--graphite);
+  --focus: var(--ink);
+  color: var(--fg);
+}
+.on-wall { color: var(--fg); }
+
+.artefact, .card {
+  background: color-mix(in srgb, var(--paper) calc(var(--lit) * 100%), var(--paper-dim));
+  color: var(--ink);
+  border: 1px solid var(--artefact-edge);
+  border-radius: var(--radius);
+  box-shadow: 1px 2px 0 var(--shadow-contact), 8px 14px 22px -4px var(--shadow-cast);
+}
+
+/* A slip is a small flat paper label: a claim, a catalogue strip. Lit like any artefact. */
+.slip, .claim {
+  background: color-mix(in srgb, var(--paper) calc(var(--lit) * 100%), var(--paper-dim));
+  color: var(--ink);
+  border: 1px solid var(--artefact-edge);
+  box-shadow: 1px 2px 0 var(--shadow-contact);
+}
+
+/* Focus: visible on wall and on paper, in both themes */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: var(--radius-max);
+}
+.skip {
+  position: absolute;
+  left: var(--margin);
+  top: -4rem;
+  z-index: var(--z-skip);
+  padding: var(--s3) var(--s4);
+  background: var(--paper);
+  color: var(--ink);
+  font: 500 var(--fs-label)/1 var(--font-mono);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  text-decoration: none;
+  --focus: var(--ink);
+}
+.skip:focus { top: var(--s4); outline-color: var(--ink); outline-offset: 2px; box-shadow: 0 0 0 5px var(--wall-text); }
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Type */
+.t-display { font-size: var(--fs-display); font-weight: 300; line-height: var(--lh-tight); letter-spacing: -0.03em; font-variant-numeric: lining-nums; }
+.t-h1 { font-size: var(--fs-h1); font-weight: 300; line-height: var(--lh-tight); letter-spacing: -0.025em; text-wrap: balance; }
+.t-h2 { font-size: var(--fs-h2); font-weight: 350; line-height: var(--lh-head); letter-spacing: -0.018em; text-wrap: balance; }
+.t-h3 { font-size: var(--fs-h3); font-weight: 400; line-height: var(--lh-head); letter-spacing: -0.01em; text-wrap: balance; }
+.t-lede { font-size: var(--fs-lede); font-weight: 350; line-height: 1.32; letter-spacing: -0.005em; text-wrap: pretty; }
+.t-body { font-size: var(--fs-body); line-height: var(--lh-body); text-wrap: pretty; }
+.t-small { font-size: var(--fs-small); line-height: 1.45; }
+.t-label {
+  font: 500 var(--fs-label)/var(--lh-mono) var(--font-mono);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+}
+.t-micro {
+  font: 400 var(--fs-micro)/var(--lh-mono) var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.t-hyp { font-style: italic; }
+.prose { max-width: 58ch; }
+.prose > * + * { margin-top: 1em; }
+.settle { font-weight: var(--wt, 400); }
+
+/* A value quoted from a record, set in mono inside the serif sentence. */
+.v {
+  font-family: var(--font-mono);
+  font-size: 0.84em;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0;
+  font-feature-settings: 'zero' 1;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  white-space: nowrap;
+}
+.v--wrap { white-space: normal; } /* long identifiers such as URIs */
+
+/* Grid: 12 columns */
+.wrap { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--margin); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
+.grid > * { grid-column: 1 / -1; min-width: 0; }
+@media (min-width: 820px) {
+  .col-1 { grid-column-end: span 1; } .col-2 { grid-column-end: span 2; } .col-3 { grid-column-end: span 3; }
+  .col-4 { grid-column-end: span 4; } .col-5 { grid-column-end: span 5; } .col-6 { grid-column-end: span 6; }
+  .col-7 { grid-column-end: span 7; } .col-8 { grid-column-end: span 8; } .col-9 { grid-column-end: span 9; }
+  .col-10 { grid-column-end: span 10; } .col-11 { grid-column-end: span 11; } .col-12 { grid-column-end: span 12; }
+  .grid > [class*='col-'] { grid-column-start: auto; }
+  .grid > .start-1 { grid-column-start: 1; } .grid > .start-2 { grid-column-start: 2; } .grid > .start-3 { grid-column-start: 3; }
+  .grid > .start-4 { grid-column-start: 4; } .grid > .start-5 { grid-column-start: 5; } .grid > .start-6 { grid-column-start: 6; }
+  .grid > .start-7 { grid-column-start: 7; } .grid > .start-8 { grid-column-start: 8; } .grid > .start-9 { grid-column-start: 9; }
+  .grid > .start-10 { grid-column-start: 10; } .grid > .start-11 { grid-column-start: 11; } .grid > .start-12 { grid-column-start: 12; }
+}

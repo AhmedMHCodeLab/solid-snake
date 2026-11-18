@@ -1,0 +1,19 @@
+/*
+ * SPOTLIGHT. Light falling on an artefact. No interface element is itself a light source: nothing glows, nothing blooms.
+ * An unlit artefact is the same sheet at lower lightness: text contrast is kept (measured on /system/), nothing is blurred or made transparent.
+ *
+ * CONTRACT
+ *   On a plate (SVG)
+ *     --spot-x --spot-y --spot-r     on .plate. Plate units as px, for example "320px". Tween these with GSAP.
+ *                                    --spot-r: 0px puts the whole plate in shade; a very large value lights all of it.
+ *     <mask id="..."> from spotMask(id, w, h) in <defs>; <rect class="plate__veil" width height mask="url(#id)"/> inside the land clip.
+ *     .spot__pool   core of the pool, edge hard.   .spot__penumbra   one step of half shade at 1.22 x the radius. Two steps, no gradient.
+ *   On a sheet (HTML)
+ *     --lit on .card / .slip / .claim / .artefact: 1 is lit paper, 0 is the same sheet at --paper-dim. Tween --lit, never opacity.
+ *     .is-unlit sets --lit: 0 (instant). Use it for the reduced-motion still.
+ *   Veil strength is --veil-a in tokens.css. Moves are 0.7 s on --ease-travel (src/ui/motion.ts: spotlight).
+ */
+.spot__pool { cx: var(--spot-x); cy: var(--spot-y); r: var(--spot-r); }
+.spot__penumbra { cx: var(--spot-x); cy: var(--spot-y); r: calc(var(--spot-r) * 1.22); }
+.plate__veil { fill: #000; fill-opacity: var(--veil-a); pointer-events: none; }
+.is-unlit { --lit: 0; }

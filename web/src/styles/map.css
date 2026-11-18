@@ -1,0 +1,132 @@
+/*
+ * MAP. The plates: national (real Natural Earth outline) and case (fictional local grid in km).
+ * No point markers anywhere except one solid verified-site survey mark. Uncertainty is line hatching, never a gradient.
+ *
+ * CONTRACT
+ *   .plate-box              frame that centres a plate in whatever space it is given (container-type: size). It needs a height:
+ *                           give it one, or use .plate-box--wide (width-driven, case plate proportions) when only the width is known
+ *   .plate                  <figure>; set style="--ar:0.8" (width / height of the viewBox). Holds one .plate__svg and any .plate__tag
+ *   .plate--national        portrait, 800 x 1000 viewBox, from src/generated/qatar.ts
+ *   .plate--case            landscape, fictional grid in km
+ *   SVG (inside .plate__svg, back to front)
+ *     .plate__graticule--wall    graticule continuing past the coast, on the wall
+ *     .plate__shadow             cast shadow of the paper cut-out (a hard offset copy of the outline)
+ *     .plate__land | .plate__sheet   the paper: the outline (national) or the rectangular sheet (case)
+ *     .plate__graticule | .plate__grid--minor/--major   printed on the paper, in construction blue
+ *     .plate__camera             optional <g> that carries pan and zoom transforms
+ *     .region                    lit, hatched broad region: .region__fill .region__hatch .region__edge
+ *     .sector                    hatched sector, dashed outer limit: .sector__fill .sector__edge .sector__limit; .sector--device for device-reported
+ *     .obs                       observation area (union of sectors): .obs__edge .obs__base .obs__fill. To draw a union outline, paint every sector as .obs__edge (stroke 5), then every sector as .obs__base, then the hatch on top
+ *     .band                      radio-measurement arc band: .band__fill .band__edge
+ *     .footprint                 dashed rival footprint: .footprint__fill .footprint__edge
+ *     .history                   outline of an earlier state of an area ("was")
+ *     .site                      the one solid verified-site survey mark: .site__ring .site__cross .site__dot
+ *     .plate__scalebar           scale bar drawn in plate units (so it is true at every zoom)
+ *     .plate__veil               darkens what the spotlight does not reach (see spotlight.css)
+ *   .is-selected on any shape  heavier edge (instant)
+ *   HTML over the SVG (always 11px, never scaled with the plate)
+ *     .plate__tag                label placed with style="--x:62;--y:41" (percent of plate width and height). Modifiers: --wall (on the wall, no slip) --end --mid (alignment) --wrap (11rem wide) --fit (wraps to the plate)
+ *     .plate__north              north mark
+ *     .simulated                 persistent SIMULATED mark. Every plate carries one.
+ *   .sprite                 hidden SVG carrying the hatch patterns (defsSprite() from src/ui/marks.ts)
+ * All strokes use vector-effect: non-scaling-stroke, so hairlines stay hairlines when the plate scales.
+ */
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.hs { fill: none; stroke-width: 1; }
+.hs--blue { stroke: var(--hatch-blue); }
+.hs--graphite { stroke: var(--hatch-graphite); }
+.hs--wall { stroke: var(--hatch-wall); }
+.hs--wall-lt { stroke: #6b675d; }
+
+.plate-box { container-type: size; display: grid; place-items: center; width: 100%; height: 100%; min-height: 0; }
+.plate-box--wide { height: auto; aspect-ratio: 1.3636; }
+.plate {
+  --ar: 0.8;
+  position: relative;
+  width: min(100cqw, calc(100cqh * var(--ar)));
+  aspect-ratio: var(--ar);
+  color: var(--ink);
+  --spot-x: 400px;
+  --spot-y: 480px;
+  --spot-r: 0px;
+}
+.plate--case { --ar: 1.3636; }
+.plate__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.plate__svg * { vector-effect: non-scaling-stroke; }
+.plate__svg .hs { vector-effect: none; }
+
+.plate__graticule--wall { fill: none; stroke: var(--wall-rule); stroke-width: 1; }
+.plate__shadow { fill: var(--shadow-cast); stroke: none; }
+.plate__land, .plate__sheet { fill: var(--plate); stroke: var(--ink); stroke-width: 1; stroke-linejoin: round; }
+.plate__graticule { fill: none; stroke: color-mix(in srgb, var(--construction) 34%, var(--plate)); stroke-width: 1; }
+.plate__grid--minor { fill: none; stroke: color-mix(in srgb, var(--construction) 26%, var(--plate)); stroke-width: 1; }
+.plate__grid--major { fill: none; stroke: color-mix(in srgb, var(--construction) 62%, var(--plate)); stroke-width: 1; }
+.plate__scalebar rect { fill: var(--ink); stroke: var(--ink); stroke-width: 1; }
+.plate__scalebar rect:nth-child(even) { fill: var(--plate); }
+
+.region__fill { fill: var(--paper); }
+.region__hatch { fill: url(#hs-region); }
+.region__edge { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+
+.sector__fill { fill: url(#hs-sector); }
+.sector__edge { fill: none; stroke: var(--ink); stroke-width: 1; }
+.sector__limit { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-dasharray: 7 4; }
+.sector--device .sector__edge { stroke-dasharray: 2 3; }
+
+.obs__base { fill: var(--plate); stroke: none; }
+.obs__fill { fill: url(#hs-obs); stroke: none; }
+.obs__edge { fill: none; stroke: var(--construction); stroke-width: 2.4; }
+
+.band__fill { fill: url(#hs-band); }
+.band__edge { fill: none; stroke: var(--construction); stroke-width: 1.2; }
+
+.footprint__fill { fill: url(#hs-footprint); }
+.footprint__edge { fill: none; stroke: var(--graphite); stroke-width: 1.5; stroke-dasharray: 8 5; }
+
+.history { fill: none; stroke: var(--graphite); stroke-width: 1.4; stroke-dasharray: 1 5; stroke-linecap: round; }
+
+.site__ring { fill: var(--plate); stroke: var(--ink); stroke-width: 1.6; }
+.site__cross { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.site__dot { fill: var(--ink); stroke: none; }
+
+.is-selected .region__edge, .is-selected .sector__limit, .is-selected .footprint__edge, .is-selected .obs__edge { stroke-width: 3; }
+
+.plate__tag {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  max-width: 14rem;
+  font: 500 var(--fs-micro)/1.3 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+  background: var(--plate);
+  padding: 2px 5px 1px;
+  margin: -2px -5px;
+}
+.plate__tag--wall { color: var(--wall-dim); background: none; padding: 0; margin: 0; }
+.plate__tag--end { transform: translateX(-100%); text-align: right; }
+.plate__tag--mid { transform: translateX(-50%); text-align: center; }
+.plate__tag--fit { white-space: normal; width: max-content; max-width: 56%; }
+.plate__tag--wrap { white-space: normal; width: 11rem; }
+.plate__tag b { font-weight: 500; display: block; color: var(--graphite); letter-spacing: 0.06em; }
+.plate__tag--wall b { color: var(--wall-dim); }
+
+.plate__north { position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); width: 22px; color: var(--wall-dim); font: 500 var(--fs-micro)/1 var(--font-mono); text-align: center; }
+.plate__north svg { width: 22px; height: 34px; margin-bottom: 3px; fill: none; stroke: currentColor; stroke-width: 1.4; }
+
+.simulated {
+  display: inline-block;
+  padding: 0.3em 0.6em 0.22em;
+  border: 1px solid currentColor;
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
+  font: 500 var(--fs-micro)/1 var(--font-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--wall-text);
+  white-space: nowrap;
+}
+.plate > .simulated { position: absolute; left: calc(var(--x, 4) * 1%); top: calc(var(--y, 94) * 1%); color: var(--wall-dim); }
+.on-paper .simulated, .plate--case .simulated { color: var(--ink); }

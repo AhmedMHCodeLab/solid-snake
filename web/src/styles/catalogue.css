@@ -1,0 +1,124 @@
+/*
+ * CATALOGUE. The persistent evidence ledger: every entry of the case, in five registers by level, plus the absences.
+ * A rail on the right from 820px up. Below 820px it is a bar at the bottom that opens to a modal sheet; the bar always shows
+ * the count of "expected, not observed". The sheet and scrim are absolutely placed against the sticky .catalogue (fixed would escape the .app frame).
+ *
+ * CONTRACT
+ *   .catalogue                 <aside aria-label="Catalogue" data-open="false|true">. Contains, in order:
+ *     .catalogue__scrim        mobile only, behind the open sheet
+ *     .catalogue__bar          <button aria-expanded aria-controls>, mobile only: .catalogue__bar-title .catalogue__bar-count .catalogue__bar-lacuna
+ *     .catalogue__sheet        the paper strip (id for aria-controls; role="dialog" aria-modal="true" aria-label while open on mobile)
+ *       .catalogue__head       .catalogue__title .catalogue__close (mobile only) .catalogue__total .tally .catalogue__lacunae
+ *       .catalogue__body       scrolls
+ *         .register            <div role="group" aria-labelledby>, one per level, 5 at the top to 1 at the bottom, then .register--lacuna
+ *           .register__head    <h3>: .register__mark .register__num .register__name .register__count
+ *           .register__list    <ol> of .entry, or .register__none when empty (an empty register stays printed)
+ *   .entry                     <li>. State modifiers: .entry--current (default) .entry--fallen ("was 4" in .entry__meta, broken mark)
+ *                              .entry--struck (title struck through: withdrawn or refuted) .entry--awaiting (dotted mark, "awaiting evidence")
+ *                              .entry--lacuna (expected, not observed) .entry--hyp (italic: a hypothesis)
+ *     .entry__link             <a> or <button> spanning the row; .entry__id (mono) .entry__title .entry__meta .entry__mark
+ *   .entry.is-new              an entry that has just moved registers: highlight by a one-off outline while it animates
+ * The register an entry sits in is its level. Nothing in this file uses colour to state a level.
+ */
+.catalogue { position: relative; min-height: 0; --cat-w: 272px; }
+.catalogue__bar, .catalogue__scrim, .catalogue__close { display: none; }
+.catalogue__sheet {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: var(--s4) var(--s4) 0;
+  background: color-mix(in srgb, var(--paper) calc(var(--lit) * 100%), var(--paper-dim));
+  color: var(--ink);
+  border: 1px solid var(--artefact-edge);
+  box-shadow: -2px 1px 0 var(--shadow-contact), -14px 10px 24px -6px var(--shadow-cast);
+}
+.catalogue__head { flex: none; padding-bottom: var(--s3); border-bottom: 1px solid var(--ink); position: relative; }
+.catalogue__head::after { content: ''; position: absolute; left: 0; right: 0; bottom: -5px; border-bottom: 1px solid var(--ink); }
+.catalogue__title { font-size: 1.5rem; line-height: 1; font-weight: 380; letter-spacing: -0.015em; }
+.catalogue__total { margin-top: var(--s2); font: 400 var(--fs-micro)/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--graphite); }
+.catalogue__head .tally { margin-top: var(--s3); }
+.catalogue__lacunae { display: flex; align-items: center; gap: var(--s2); margin-top: var(--s3); font: 500 var(--fs-micro)/1.3 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); }
+.catalogue__lacunae b { font-weight: 500; font-size: var(--fs-small); }
+.catalogue__body { flex: 1; min-height: 0; overflow: auto; margin: 0 calc(var(--s4) * -1); padding: var(--s4) var(--s4) var(--s5); scrollbar-width: thin; scrollbar-color: var(--rule) transparent; }
+
+.register { padding: 10px 0 8px; border-top: 1px solid var(--rule); }
+.register:first-child { border-top: 0; padding-top: 0; }
+.register__head { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; column-gap: var(--s2); font-weight: 400; }
+.register__mark { display: inline-flex; }
+.register__num { font: 500 var(--fs-label)/1 var(--font-mono); }
+.register__name { font-size: 0.9375rem; line-height: 1.2; font-weight: 480; }
+.register__count { font: 500 var(--fs-small)/1 var(--font-mono); font-variant-numeric: tabular-nums; min-width: 1.4em; text-align: right; }
+.register__list { margin-top: 6px; }
+.register__none { margin-top: 4px; padding: 2px 0 0 2.6rem; font: 400 var(--fs-micro)/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--graphite); }
+.register--lacuna .register__head { grid-template-columns: auto minmax(0, 1fr) auto; }
+
+.entry { border-top: 1px solid var(--rule); }
+.entry:first-child { border-top: 0; }
+.entry__link {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr) auto;
+  column-gap: var(--s2);
+  align-items: baseline;
+  margin-inline: -6px;
+  width: calc(100% + 12px);
+  padding: 5px 6px;
+  text-align: left;
+  text-decoration: none;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  font-size: 0.9375rem;
+  line-height: 1.28;
+}
+.entry__link:hover { background: var(--plate); }
+.entry__id { font: 500 var(--fs-label)/1.3 var(--font-mono); letter-spacing: 0.02em; }
+.entry__title { min-width: 0; text-wrap: pretty; }
+.entry__meta { grid-column: 2 / -1; font: 400 var(--fs-micro)/1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--graphite); }
+.entry__mark { grid-row: 1; grid-column: 3; align-self: center; }
+.entry--hyp .entry__title { font-style: italic; }
+.entry--fallen .entry__meta { color: var(--ink); }
+.entry--struck .entry__title { text-decoration: line-through; text-decoration-thickness: 1.5px; }
+.entry--awaiting .entry__title { color: var(--graphite); }
+.entry--lacuna .entry__link { grid-template-columns: 2.6rem minmax(0, 1fr) auto; }
+.entry--lacuna .entry__title { color: var(--ink); }
+.entry.is-new .entry__link { outline: 1.5px solid var(--ink); outline-offset: -1.5px; }
+
+/* Desktop rail */
+@container app (min-width: 820px) {
+  .app__catalogue > .catalogue { height: 100%; }
+  .catalogue__sheet { inset: var(--s4) var(--s4) var(--s4) 0; }
+}
+
+/* Mobile: bottom bar and modal sheet */
+@container app (max-width: 819.98px) {
+  .catalogue { position: sticky; bottom: 0; z-index: var(--z-sheet); }
+  .catalogue__bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--s3);
+    width: 100%;
+    min-height: 56px;
+    padding: 8px var(--margin) 10px;
+    background: var(--paper);
+    color: var(--ink);
+    border: 0;
+    border-top: 2px solid var(--ink);
+    text-align: left;
+    --focus: var(--ink);
+  }
+  .catalogue__bar-main { display: grid; gap: 3px; }
+  .catalogue__bar-title { font-size: 1.0625rem; font-weight: 420; line-height: 1.1; }
+  .catalogue__bar-count { white-space: nowrap; font: 400 var(--fs-micro)/1.3 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--graphite); }
+  .catalogue__bar-lacuna { display: inline-flex; align-items: center; gap: 8px; max-width: 11rem; font: 500 var(--fs-micro)/1.2 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+  .catalogue__bar-lacuna b { font-size: var(--fs-small); font-weight: 500; }
+  .catalogue__sheet { display: none; position: absolute; inset: auto 0 0 0; height: var(--sheet-h, 92svh); z-index: var(--z-sheet); padding: var(--s4) var(--margin) 0; box-shadow: 0 -2px 0 var(--shadow-contact); }
+  .catalogue[data-open='true'] .catalogue__sheet { display: flex; }
+  .catalogue[data-open='true'] .catalogue__scrim { display: block; position: absolute; inset: auto 0 0 0; height: var(--app-h, 100svh); z-index: var(--z-sheet); background: rgba(8, 9, 10, 0.72); }
+  .catalogue[data-open='true'] .catalogue__bar { display: none; }
+  .catalogue__close { display: inline-flex; position: absolute; right: 0; top: 0; min-height: 44px; min-width: 44px; align-items: center; justify-content: center; padding: 0 var(--s3); background: transparent; border: 1.5px solid var(--ink); color: var(--ink); font: 500 var(--fs-label)/1 var(--font-mono); letter-spacing: var(--track-caps); text-transform: uppercase; }
+  .catalogue__close:hover { background: var(--ink); color: var(--paper); }
+  .catalogue__body { margin: 0 calc(var(--margin) * -1); padding: var(--s4) var(--margin) var(--s6); }
+}

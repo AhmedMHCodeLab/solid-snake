@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SOLID SNAKE console</title>
+    <meta name="description" content="A telecom fraud intelligence platform built from published research. This demo runs on synthetic data and is not connected to any operator. Not yet reviewed by telecom practitioners." />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="../../node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="../../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="../../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2" />
+    <script>
+      try { var t = localStorage.getItem('ss-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+    </script>
+    <script type="module" src="/src/console/main.ts"></script>
+  </head>
+  <body class="console">
+    <a class="skip" href="#panel-main">Skip to the workspace</a>
+    <header class="topbar">
+      <a class="brand" href="/"><span class="brand__name">Solid Snake</span><span class="brand__case">Fraud intelligence console</span></a>
+      <nav class="tabs" id="tabs" aria-label="Console"><a class="tabs__a" href="#monitor" aria-current="page">Monitor</a></nav>
+      <p class="clock" id="clock"><span class="clock__k">Feed time</span> <span class="v" id="clock-v">waiting</span></p>
+      <p class="simulated handling handling--top">SIMULATED // EXERCISE DATA</p>
+      <div class="topbar__end">
+        <label class="acct"><span class="acct__k">Signed in as</span> <select id="acct" class="acct__s" aria-label="Signed in as"></select></label>
+        <button class="themebtn" id="theme" type="button" aria-pressed="false">Light theme</button>
+      </div>
+    </header>
+    <main class="shell" id="shell" data-mode="monitor">
+      <section class="stage" aria-labelledby="map-h">
+        <h2 class="sr-only" id="map-h">Map</h2>
+        <div class="cmap" id="map" tabindex="0" role="group" aria-label="Map of Qatar. Plus and minus zoom, arrow keys pan, 0 resets."></div>
+        <div class="mapcap" id="mapcap"></div>
+        <div class="mapctl" role="group" aria-label="Map controls">
+          <button class="mapctl__b" type="button" data-zoom="in" aria-label="Zoom in">+</button>
+          <button class="mapctl__b" type="button" data-zoom="out" aria-label="Zoom out">&minus;</button>
+          <button class="mapctl__b mapctl__b--w" type="button" data-zoom="reset">Reset view</button>
+          <details class="areas" id="areas"><summary class="mapctl__b mapctl__b--w">Areas on this plate</summary><ul class="areas__list" id="areas-list"></ul></details>
+        </div>
+        <section class="mappanel" id="mappanel" aria-labelledby="mappanel-h" hidden></section>
+      </section>
+      <section class="panel panel--main" id="panel-main" tabindex="-1" aria-label="Workspace"></section>
+      <aside class="panel panel--side" id="panel-side" aria-label="Queue and register"></aside>
+    </main>
+    <footer class="foot">
+      <p class="simulated handling handling--bottom">SIMULATED // EXERCISE DATA</p>
+      <p class="foot__about">A telecom fraud intelligence platform built from published research. This demo runs on synthetic data and is not connected to any operator. Not yet reviewed by telecom practitioners.</p>
+      <a class="foot__link" href="/about/">About the method and sources</a>
+    </footer>
+    <div class="sr-only" aria-live="polite" id="live"></div>
+  </body>
+</html>

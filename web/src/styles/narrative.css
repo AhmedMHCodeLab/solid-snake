@@ -1,0 +1,42 @@
+/*
+ * NARRATIVE BLOCKS. The three kinds of text in the case walk (shared/types.ts NarrativeBlock).
+ *
+ * CONTRACT
+ *   .claim            a statement about an entry, set on a paper slip with that entry's level mark.
+ *                     Modifiers: .claim--l1 .. .claim--l5 (l4 is italic). Parts:
+ *                     .claim__mark (levelMark), .claim__meta (mono: entry id and level in words), .claim__text (the statement)
+ *   .context          background: a mechanism, a definition, a limit of the records. Set on the wall. Parts:
+ *                     .context__basis (the .basis label), .context__text, .context__source (mono source note)
+ *   .limit            what cannot be said here. Set on the wall with the lacuna bracket. Parts:
+ *                     .limit__mark (lacunaBracket), .limit__label (mono "Cannot be said"), .limit__text
+ *   .stagehead        wall heading of a stage: .stagehead__num (display numeral) .stagehead__kicker (mono) .stagehead__name (h1) .stagehead__lede
+ * Everything quoted from a record goes in .v.
+ */
+.claim {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--s4);
+  align-items: start;
+  padding: var(--s4) var(--s5) var(--s4) var(--s4);
+}
+.claim__mark { grid-row: 1 / span 2; margin-top: 2px; }
+.claim__meta { font: 400 var(--fs-micro)/1.3 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--graphite); margin-bottom: 4px; }
+.claim__text { font-size: 1.125rem; line-height: 1.38; font-weight: var(--wt, 440); text-wrap: pretty; }
+.claim--l4 .claim__text { font-style: italic; font-weight: var(--wt, 400); }
+.claim--l1 .claim__text { font-weight: var(--wt, 400); }
+
+.context { border-left: 1px solid var(--line-strong); padding-left: var(--s4); max-width: 56ch; }
+.context__basis { margin-bottom: var(--s2); color: var(--fg-2); }
+.context__text { font-size: 1.0625rem; line-height: 1.5; text-wrap: pretty; }
+.context__source { margin-top: var(--s2); font: 400 var(--fs-micro)/1.45 var(--font-mono); letter-spacing: 0.04em; color: var(--fg-2); overflow-wrap: anywhere; }
+
+.limit { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s4); align-items: start; max-width: 56ch; padding-top: var(--s3); border-top: 1px dashed var(--line-strong); }
+.limit__mark { grid-row: 1 / span 2; margin-top: 2px; color: var(--fg); }
+.limit__label { font: 500 var(--fs-micro)/1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-2); margin-bottom: 6px; }
+.limit__text { font-size: 1.0625rem; line-height: 1.45; font-style: italic; text-wrap: pretty; }
+
+.stagehead { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s5); align-items: end; }
+.stagehead__num { font-size: clamp(3.5rem, 1.6rem + 6vw, 7.5rem); font-weight: 200; line-height: 0.82; letter-spacing: -0.04em; font-variant-numeric: lining-nums; }
+.stagehead__kicker { font: 500 var(--fs-label)/1 var(--font-mono); letter-spacing: var(--track-caps); text-transform: uppercase; color: var(--fg-2); margin-bottom: var(--s2); }
+.stagehead__name { font-size: clamp(2.25rem, 1.3rem + 3vw, 4.25rem); font-weight: 300; line-height: var(--lh-tight); letter-spacing: -0.025em; }
+.stagehead__lede { grid-column: 1 / -1; margin-top: var(--s5); font-size: var(--fs-lede); font-weight: 350; line-height: 1.3; max-width: 30ch; text-wrap: pretty; }

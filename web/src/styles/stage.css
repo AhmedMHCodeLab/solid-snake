@@ -1,0 +1,99 @@
+/*
+ * STAGE. The application frame: one persistent map, panels over it, the stage rail along the bottom.
+ * The layout answers to the width of .app (a container), not of the window, so the same markup works full-screen and in a framed still.
+ *
+ * CONTRACT
+ *   .app                     <div class="app"> container. .app--still gives it the 1440 x 900 proportion (a 760px scroll box under 820px); .app--box a fixed scroll box (design page)
+ *     .app__frame            the layout grid
+ *       .app__map            the persistent map: holds a .plate-box. Never scrolls. Centred in the space left of the catalogue.
+ *       .app__wall           stage heading and wall text (.stagehead, .context, .limit), on the wall
+ *       .app__cards          exhibit cards and claim slips that carry the stage; they sit over the map
+ *       .app__rail           the stage rail
+ *       .app__catalogue      holds the .catalogue
+ *   .brand                   wordmark: .brand__name .brand__case
+ *   .stagerail               <nav aria-label="Case progress" style="--progress:0.5">. A progress rail, not a menu.
+ *     .stagerail__summary    "Stage 4 of 7: Test" (visible below 820px, read aloud everywhere)
+ *     .stagerail__list       <ol>; .stagerail__item with data-state="done|current|todo" and aria-current="step" on the current one
+ *       .stagerail__node .stagerail__num .stagerail__name
+ *     .stagerail__track .stagerail__fill   hairline and its progress (scaleX of --progress, 0 to 1). Tween --progress on a stage change (1.1 s, travel).
+ *     State is a shape: done is a filled square, current a square with a ring and a bold name, to-do an open square.
+ *   Below 820px: the rail is a compact bar on top, the map pins under it, wall and cards scroll over the map, the catalogue is a bottom bar.
+ */
+.app {
+  container: app / inline-size;
+  position: relative;
+  height: 100svh;
+  min-height: 560px;
+  background: var(--wall);
+  color: var(--wall-text);
+  overflow: hidden;
+  --map-h: 44svh;
+  --app-h: 100svh;
+  --sheet-h: 92svh;
+}
+.app--still { height: auto; min-height: 0; aspect-ratio: 1440 / 900; }
+@media (max-width: 819.98px) { .app--still { aspect-ratio: auto; height: var(--box-h, 760px); overflow: auto; --map-h: 330px; --app-h: var(--box-h, 760px); --sheet-h: calc(var(--box-h, 760px) * 0.92); } }
+.app--box { height: var(--box-h, 844px); min-height: 0; overflow: auto; --map-h: 330px; --app-h: var(--box-h, 844px); --sheet-h: calc(var(--box-h, 844px) * 0.92); }
+.app__frame { position: relative; height: 100%; }
+.app__map { position: relative; min-height: 0; }
+.app__wall, .app__cards, .app__rail, .app__catalogue { position: relative; }
+
+.brand { display: flex; align-items: baseline; gap: var(--s3); font: 500 var(--fs-label)/1 var(--font-mono); letter-spacing: 0.18em; text-transform: uppercase; }
+.brand__case { color: var(--fg-2); letter-spacing: 0.1em; }
+
+/* Stage rail */
+.stagerail { position: relative; color: var(--wall-text); }
+.stagerail__summary { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); font: 500 var(--fs-label)/1.2 var(--font-mono); letter-spacing: var(--track-caps); text-transform: uppercase; }
+.stagerail__summary b { font-weight: 500; }
+.stagerail__list { position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.stagerail__track { position: absolute; left: calc(100% / 14); right: calc(100% / 14); top: 6px; height: 0; border-top: 1px solid var(--wall-rule-strong); }
+.stagerail__fill { position: absolute; left: calc(100% / 14); right: calc(100% / 14); top: 5px; height: 0; border-top: 3px solid var(--wall-text); transform-origin: 0 50%; transform: scaleX(var(--progress, 0)); }
+.stagerail__item { position: relative; display: grid; justify-items: center; gap: 6px; padding-top: 0; text-align: center; color: var(--wall-dim); }
+.stagerail__node { display: block; position: relative; width: 13px; height: 13px; background: var(--wall); border: 2px solid var(--wall-dim); }
+.stagerail__num { font: 500 var(--fs-micro)/1 var(--font-mono); letter-spacing: 0.1em; }
+.stagerail__name { font-size: 0.9375rem; line-height: 1.15; }
+.stagerail__item[data-state='done'] { color: var(--wall-text); }
+.stagerail__item[data-state='done'] .stagerail__node { background: var(--wall-text); border-color: var(--wall-text); }
+.stagerail__item[data-state='current'] { color: var(--wall-text); }
+.stagerail__item[data-state='current'] .stagerail__node { background: var(--wall); border-color: var(--wall-text); border-width: 3px; outline: 1.5px solid var(--wall-text); outline-offset: 3px; }
+.stagerail__item[data-state='current'] .stagerail__name { font-weight: 600; }
+.stagerail__item[data-state='todo'] .stagerail__node { background: var(--wall); }
+
+/* Desktop composition */
+@container app (min-width: 820px) {
+  .app__frame { display: grid; grid-template-columns: minmax(0, 1fr) var(--cat-w, 272px); grid-template-rows: minmax(0, 1fr) auto; }
+  .app__map { position: absolute; inset: 0 var(--cat-w, 272px) 0 0; z-index: var(--z-map); }
+  .app__wall { grid-area: 1 / 1; z-index: var(--z-wall); align-self: start; max-width: 26rem; padding: var(--s6) var(--margin); display: grid; gap: var(--s6); pointer-events: none; }
+  .app__wall > * { pointer-events: auto; }
+  .app__cards { grid-area: 1 / 1; z-index: var(--z-card); justify-self: end; align-self: end; width: min(22.5rem, 34cqw); margin: 0 var(--s7) var(--s9) 0; display: grid; gap: var(--s4); }
+  .app__rail { grid-area: 2 / 1; z-index: var(--z-rail); padding: var(--s3) var(--margin) var(--s5); }
+  .app__catalogue { grid-area: 1 / 2 / 3 / 3; z-index: var(--z-rail); }
+}
+
+/* Tablet width (820 to 1099px): wall text on top, the map in a band in the middle, the card across the bottom */
+@container app (min-width: 820px) and (max-width: 1099.98px) {
+  .app__map { inset: 26% var(--cat-w, 272px) 36% 0; }
+  .app__wall { max-width: none; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s5) var(--s6); align-items: end; }
+  .app__wall > .brand { grid-column: 1 / -1; }
+  .app__cards { justify-self: stretch; width: auto; margin: 0 var(--margin) var(--s9); }
+}
+@media (min-width: 820px) and (max-width: 1099.98px) { .app--still { aspect-ratio: 820 / 1300; } }
+
+/* Mobile composition: rail on top, map pinned, wall and cards scroll over it, catalogue bar at the bottom */
+@container app (max-width: 819.98px) {
+  .app__frame { display: flex; flex-direction: column; height: auto; min-height: 100%; }
+  .app__rail { position: sticky; top: 0; z-index: var(--z-rail); order: 0; padding: 10px var(--margin) 12px; background: var(--wall); border-bottom: 1px solid var(--wall-rule); }
+  .stagerail { display: grid; gap: 10px; }
+  .stagerail__summary { position: static; width: auto; height: auto; overflow: visible; clip-path: none; }
+  .stagerail__list { grid-template-columns: repeat(7, 1fr); column-gap: 4px; }
+  .stagerail__track, .stagerail__fill { display: none; }
+  .stagerail__item { gap: 0; }
+  .stagerail__node { width: 100%; height: 6px; border-width: 1px; border-color: var(--wall-dim); }
+  .stagerail__item[data-state='current'] .stagerail__node { height: 10px; margin-top: -2px; outline: 0; border-width: 2px; }
+  .stagerail__num, .stagerail__name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .app__map { position: sticky; top: 56px; z-index: var(--z-map); order: 1; height: var(--map-h); }
+  .app__wall { order: 2; position: relative; z-index: var(--z-wall); padding: var(--s5) var(--margin) var(--s5); background: var(--wall); border-top: 1px solid var(--wall-rule); display: grid; gap: var(--s5); }
+  .app__cards { order: 3; position: relative; z-index: var(--z-card); display: grid; gap: var(--s5); padding: var(--s5) var(--margin) var(--s7); background: var(--wall); }
+  .app__catalogue { order: 4; position: sticky; bottom: 0; z-index: var(--z-sheet); }
+  .stagehead__lede { max-width: none; }
+}

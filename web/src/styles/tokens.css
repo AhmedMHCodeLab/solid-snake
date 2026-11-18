@@ -1,0 +1,127 @@
+/*
+ * TOKENS. Two themes on the same artefacts. Dark is the default; [data-theme="light"] on any element re-themes its subtree.
+ *
+ * CONTRACT
+ *   Theme       <html data-theme="dark|light"> or any wrapper. The wall changes; the artefacts (paper, ink, blue, oxide) do not.
+ *   Wall        --wall --wall-2 --wall-text --wall-dim --wall-rule --wall-rule-strong --hatch-wall
+ *   Artefact    --paper --plate --paper-dim --ink --graphite --rule --construction --oxide
+ *   Veil        --veil-a (how much an unlit artefact is darkened, as an alpha of black)
+ *   Surface     .on-wall / .on-paper set --fg --fg-2 --line --line-strong --focus for their subtree. Style with these, not with raw colours.
+ *   Lit         --lit (0 to 1) on any .artefact: 1 lit paper, 0 the same sheet at --paper-dim. Tween it; never fade opacity.
+ *   Type        --font-serif --font-mono --fs-micro --fs-label --fs-small --fs-body --fs-lede --fs-h3 --fs-h2 --fs-h1 --fs-display
+ *               --lh-tight --lh-head --lh-body --lh-mono --track-caps
+ *   Space       --s1 (4px) --s2 (8) --s3 (12) --s4 (16) --s5 (24) --s6 (32) --s7 (48) --s8 (64) --s9 (96) --s10 (128)
+ *   Grid        --margin --gutter --max (12 columns; see base.css .grid and .col-N)
+ *   Motion      --dur-quick (0.4s) --dur-standard (0.7s) --dur-long (1.1s) --ease-settle --ease-travel --ease-draw. Reduced motion zeroes the durations.
+ *   Layers      --z-map --z-wall --z-card --z-rail --z-sheet --z-skip
+ *   Shape       --radius (0), --radius-max (2px). Nothing is rounder than that.
+ */
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --wall: #0f1113;
+  --wall-2: #171a1c;
+  --wall-text: #e9e4d8;
+  --wall-dim: #9a968c;
+  --wall-rule: #34383b;
+  --wall-rule-strong: #6f6c65;
+  --hatch-wall: #7b7971;
+  --shadow-contact: rgba(0, 0, 0, 0.5);
+  --shadow-cast: rgba(0, 0, 0, 0.42);
+  --artefact-edge: transparent;
+}
+[data-theme='light'] {
+  color-scheme: light;
+  --wall: #d6d1c3;
+  --wall-2: #cdc7b7;
+  --wall-text: #15181b;
+  --wall-dim: #4d4a43;
+  --wall-rule: #b4ae9d;
+  --wall-rule-strong: #6b675d;
+  --hatch-wall: #6b675d;
+  --shadow-contact: rgba(40, 34, 20, 0.3);
+  --shadow-cast: rgba(40, 34, 20, 0.26);
+  --artefact-edge: rgba(21, 24, 27, 0.28);
+}
+
+:root {
+  /* Artefacts: identical in both themes. */
+  --paper: #f2efe8;
+  --plate: #e8e4da;
+  --paper-dim: #cfcbc0;
+  --ink: #15181b;
+  --graphite: #4a4f55;
+  --rule: #b9b4a8; /* hairlines only: 1.8:1 on paper, never carries meaning */
+  --construction: #1e3f66;
+  --oxide: #8a3a22; /* one use: the level 5 sign-off */
+  --veil-a: 0.3;
+  --lit: 1;
+
+  --hatch-blue: var(--construction);
+  --hatch-graphite: var(--graphite);
+
+  --font-serif: 'Newsreader Variable', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+
+  --fs-micro: 0.6875rem;
+  --fs-label: 0.75rem;
+  --fs-small: 0.875rem;
+  --fs-body: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --fs-lede: clamp(1.25rem, 1.08rem + 0.75vw, 1.625rem);
+  --fs-h3: clamp(1.375rem, 1.2rem + 0.8vw, 1.875rem);
+  --fs-h2: clamp(1.875rem, 1.4rem + 2vw, 3rem);
+  --fs-h1: clamp(2.5rem, 1.6rem + 3.8vw, 5rem);
+  --fs-display: clamp(3.5rem, 1.8rem + 7.2vw, 9rem);
+  --lh-tight: 1.02;
+  --lh-head: 1.12;
+  --lh-body: 1.5;
+  --lh-mono: 1.45;
+  --track-caps: 0.08em;
+  --wt-open: 300; /* a claim that is not yet settled is set in a light weight */
+  --wt-set: 480; /* and settles to this on the weight axis */
+
+  --s1: 0.25rem;
+  --s2: 0.5rem;
+  --s3: 0.75rem;
+  --s4: 1rem;
+  --s5: 1.5rem;
+  --s6: 2rem;
+  --s7: 3rem;
+  --s8: 4rem;
+  --s9: 6rem;
+  --s10: 8rem;
+
+  --margin: clamp(16px, 3.4vw, 48px);
+  --gutter: clamp(12px, 1.6vw, 24px);
+  --max: 1440px;
+
+  --dur-quick: 0.4s;
+  --dur-standard: 0.7s;
+  --dur-long: 1.1s;
+  --ease-settle: cubic-bezier(0.215, 0.61, 0.355, 1); /* GSAP power2.out */
+  --ease-travel: cubic-bezier(0.77, 0, 0.175, 1); /* GSAP power3.inOut */
+  --ease-draw: cubic-bezier(0.455, 0.03, 0.515, 0.955); /* GSAP power1.inOut */
+
+  --z-map: 0;
+  --z-wall: 2;
+  --z-card: 3;
+  --z-rail: 4;
+  --z-sheet: 10;
+  --z-skip: 20;
+
+  --radius: 0;
+  --radius-max: 2px;
+}
+
+[data-theme] {
+  background-color: var(--wall);
+  color: var(--wall-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-quick: 0s;
+    --dur-standard: 0s;
+    --dur-long: 0s;
+  }
+}

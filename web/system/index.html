@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SOLID SNAKE design system (simulation)</title>
+    <meta name="description" content="A telecom fraud intelligence platform built from published research. This demo runs on synthetic data and is not connected to any operator. Not yet reviewed by telecom practitioners." />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="../../node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="../../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="../../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2" />
+    <script>
+      /* Theme before first paint: ?theme=light|dark, else dark. */
+      try {
+        var t = new URLSearchParams(location.search).get('theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+    <script type="module" src="/src/system/main.ts"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <div id="app"></div>
+  </body>
+</html>

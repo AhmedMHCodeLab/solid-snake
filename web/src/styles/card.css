@@ -1,0 +1,69 @@
+/*
+ * EXHIBIT CARD. A paper sheet with a cast shadow and a museum tombstone label. The tombstone is the provenance layer.
+ *
+ * CONTRACT
+ *   .card                     paper sheet (already .on-paper and an artefact). Modifiers by level and state:
+ *                             .card--l4 (dashed frame open on one side, italic text)  .card--l5 (frame inked solid, sign-off block)
+ *                             .card--fallen (frame broken and struck, "was 4" printed)  .card--awaiting  .card--unsignable
+ *   .card__head               row: .card__kind (mono caps: Indicator, Record slip, Hypothesis) and .card__mark (a levelMark)
+ *   .card__title              the card's heading (serif)
+ *   .card__body               prose. Values quoted from records go in <span class="v">
+ *   .card__was                printed former level on a fallen card: <p class="card__was">was <span class="v">4</span></p>
+ *   .card__signoff            level 5 only: the sign-off line. .card__signoff-line (oxide rule) .card__signoff-text ("VERIFIED (SIMULATED)")
+ *   .tombstone                <dl>. Rows are .tombstone__row > dt.tombstone__k + dd.tombstone__v.
+ *                             Fields, in this order: Accession, Medium, Collection point, Window, Level, Basis.
+ *   .tombstone__v--mono       for identifiers
+ * Hover and focus change nothing but the outline: cards are not buttons. Put a real <button> or <a> inside when one is needed.
+ */
+.card {
+  position: relative;
+  padding: var(--s5) var(--s5) var(--s4);
+  font-size: var(--fs-small);
+  line-height: 1.5;
+  isolation: isolate;
+}
+.card__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); margin-bottom: var(--s4); }
+.card__kind { font: 500 var(--fs-micro)/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--graphite); }
+.card__mark { flex: none; }
+.card__title { font-size: 1.375rem; line-height: 1.15; font-weight: 420; letter-spacing: -0.01em; text-wrap: balance; margin-bottom: var(--s3); }
+.card__body { font-size: 1rem; line-height: 1.5; color: var(--ink); text-wrap: pretty; }
+.card__body > * + * { margin-top: 0.7em; }
+.card__figure { margin: var(--s4) 0 0; }
+
+.tombstone {
+  margin-top: var(--s5);
+  padding-top: 7px;
+  border-top: 1px solid var(--ink);
+  position: relative;
+}
+.tombstone::before { content: ''; position: absolute; left: 0; right: 0; top: -4px; border-top: 1px solid var(--ink); }
+.tombstone__row { display: grid; grid-template-columns: 7.2rem minmax(0, 1fr); gap: var(--s3); padding: 5px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+.tombstone__row:last-child { border-bottom: 0; }
+.tombstone__k { font: 400 var(--fs-micro)/1.35 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--graphite); }
+.tombstone__v { font-size: 0.875rem; line-height: 1.35; color: var(--ink); min-width: 0; }
+.tombstone__v--mono { font: 400 0.8125rem/1.35 var(--font-mono); overflow-wrap: anywhere; }
+
+/* Level 4: a hypothesis is a dashed frame around what it cites, open on one side where its rivals hang. */
+.card--l4 .card__body, .card--l4 .card__title { font-style: italic; }
+.card--l4::after, .card--l5::after, .card--fallen::after, .card--awaiting::after, .card--unsignable::after {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  z-index: -1;
+  pointer-events: none;
+  border: 1.5px dashed var(--graphite);
+  border-right: 0;
+}
+.card--l5::after { border: 2px solid var(--ink); }
+.card--fallen::after { border: 1.5px dashed var(--graphite); border-right: 0; border-top-style: dotted; border-left-style: dotted; }
+.card--awaiting::after { border: 1.5px dotted var(--graphite); border-right: 0; }
+.card--unsignable::after { border: 1.5px dashed var(--graphite); border-right: 0; }
+.card--fallen .card__title { text-decoration: line-through; text-decoration-thickness: 2px; }
+.tombstone__v .levelline { flex-wrap: wrap; max-width: 100%; row-gap: 2px; }
+.card__kind { line-height: 1.3; }
+.card__was { margin-top: var(--s3); font: 400 var(--fs-small)/1 var(--font-mono); color: var(--graphite); text-transform: uppercase; letter-spacing: 0.08em; }
+.card__was .v { font-size: 1em; color: var(--ink); }
+
+.card__signoff { margin-top: var(--s5); }
+.card__signoff-line { display: block; height: 0; border-top: 2px solid var(--oxide); margin-bottom: 6px; }
+.card__signoff-text { font: 500 var(--fs-label)/1.2 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--oxide); }

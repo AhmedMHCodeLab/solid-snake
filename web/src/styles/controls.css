@@ -1,0 +1,57 @@
+/*
+ * CONTROLS. Buttons and the reason-code chooser used in the sign-off. There is no free-text field anywhere in the product.
+ *
+ * CONTRACT
+ *   .btn                      outlined button in --fg on whatever surface it sits on. .btn--primary fills with --fg (text in --surface).
+ *                             .btn--quiet is text with an underline. Disabled: [disabled] or [aria-disabled="true"] gives a dashed frame
+ *                             and the reason must be printed beside it (never rely on the dashed frame alone).
+ *   .btn__key                 optional mono hint inside a button
+ *   .actions                  row of buttons
+ *   .chooser                  <fieldset>: <legend class="chooser__legend">, then .chooser__opt labels:
+ *                             <label class="chooser__opt"><input class="chooser__input" type="radio" name=".."><span class="chooser__box"><i></i></span>
+ *                             <span class="chooser__label">..</span><span class="chooser__code">R-02</span></label>
+ *                             The box is a square bracket pair: empty when open, filled when chosen. The chosen text is also set in a heavier weight.
+ * Hover is instant: it inverts the button. Nothing transitions.
+ */
+.btn {
+  --btn-bg: transparent;
+  --btn-fg: var(--fg);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+  min-height: 44px;
+  padding: 0.7rem 1.1rem 0.62rem;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  border: 1.5px solid var(--fg);
+  border-radius: var(--radius);
+  font: 500 var(--fs-label)/1 var(--font-mono);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.btn:hover:not([disabled]):not([aria-disabled='true']) { --btn-bg: var(--fg); --btn-fg: var(--surface); }
+.btn--primary { --btn-bg: var(--fg); --btn-fg: var(--surface); }
+.btn--primary:hover:not([disabled]):not([aria-disabled='true']) { --btn-bg: transparent; --btn-fg: var(--fg); }
+.btn--quiet { border-color: transparent; border-bottom-color: var(--fg); padding-inline: 0.1rem; min-height: 44px; }
+.btn[disabled], .btn[aria-disabled='true'] { border-style: dashed; --btn-bg: transparent; --btn-fg: var(--fg-2); border-color: var(--fg-2); cursor: not-allowed; }
+.btn__key { font-weight: 400; color: inherit; opacity: 1; border-left: 1px solid currentColor; padding-left: var(--s3); }
+.actions { display: flex; flex-wrap: wrap; gap: var(--s3); }
+
+.chooser { border: 0; padding: 0; margin: 0; min-width: 0; }
+.chooser__legend { float: left; width: 100%; padding: 0; margin-bottom: var(--s3); font: 500 var(--fs-label)/1.3 var(--font-mono); letter-spacing: var(--track-caps); text-transform: uppercase; color: var(--fg-2); }
+.chooser__legend + .chooser__opt { clear: both; }
+.chooser__opt { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: baseline; column-gap: var(--s3); padding: var(--s3) 0; min-height: 44px; border-top: 1px solid var(--line); cursor: pointer; font-size: 1rem; line-height: 1.35; }
+.chooser__opt:last-of-type { border-bottom: 1px solid var(--line); }
+.chooser__opt:hover .chooser__label { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.25em; }
+.chooser__input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.chooser__box { position: relative; width: 22px; height: 16px; align-self: center; border-left: 2px solid var(--fg); border-right: 2px solid var(--fg); }
+/* bracket arms: ::before is the left pair, ::after the right pair */
+.chooser__box::before, .chooser__box::after { content: ''; position: absolute; top: -2px; bottom: -2px; width: 7px; border-top: 2px solid var(--fg); border-bottom: 2px solid var(--fg); }
+.chooser__box::before { left: -2px; }
+.chooser__box::after { right: -2px; }
+.chooser__box > i { position: absolute; inset: 4px 5px; background: transparent; }
+.chooser__input:checked + .chooser__box > i { background: var(--fg); }
+.chooser__input:checked ~ .chooser__label { font-weight: 560; }
+.chooser__input:focus-visible + .chooser__box { outline: 2px solid var(--focus); outline-offset: 5px; }
+.chooser__code { font: 400 var(--fs-micro)/1 var(--font-mono); letter-spacing: 0.1em; color: var(--fg-2); }

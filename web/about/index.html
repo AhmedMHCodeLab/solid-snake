@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About SOLID SNAKE: method and sources</title>
+    <meta name="description" content="A telecom fraud intelligence platform built from published research. This demo runs on synthetic data and is not connected to any operator. Not yet reviewed by telecom practitioners." />
+    <script>
+      try { var t = localStorage.getItem('ss-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+    </script>
+    <script type="module" src="/src/about/main.ts"></script>
+  </head>
+  <body class="entry">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="entry__bar">
+      <a class="brand" href="/"><span class="brand__name">Solid Snake</span><span class="brand__case">About</span></a>
+      <p class="simulated handling handling--top">SIMULATED // EXERCISE DATA</p>
+      <a class="entry__link" href="/console/">Console</a>
+    </header>
+    <main id="main" class="entry__main about">
+      <section class="entry__hero" aria-labelledby="h">
+        <p class="entry__k">About</p>
+        <h1 class="entry__h" id="h">A telecom fraud intelligence platform built from published research.</h1>
+        <p class="entry__lede about__line">A telecom fraud intelligence platform built from published research. This demo runs on synthetic data and is not connected to any operator. Not yet reviewed by telecom practitioners.</p>
+      </section>
+
+      <section class="about__s" aria-labelledby="live-h">
+        <h2 class="entry__sh" id="live-h">What is live and what is prepared</h2>
+        <div class="about__cols">
+          <div><h3 class="about__h3">Live in this demo</h3><p>Ingesting call records, running detection rules over every record, the alert queue, opening a case, the case workflow, the level gates, roles, the hash-chained audit trail and the referral packet. These work on any feed in the same record format.</p></div>
+          <div><h3 class="about__h3">Prepared in this demo</h3><p>What each outside source returns: device information, radio measurements, registration data and the field survey. No operator is connected, so each source answers through a demo connector that serves synthetic data. A live connector replaces it without changing anything else.</p></div>
+        </div>
+        <p class="entry__note">All records, people, organisations and places in the demo are synthetic. Organisations are named the way an intelligence product minimises them, for example Operator 1. No real company or authority is a client, a source or a recipient.</p>
+      </section>
+
+      <section class="about__s" aria-labelledby="lv-h">
+        <h2 class="entry__sh" id="lv-h">Five levels of claim</h2>
+        <p class="entry__note">Every statement belongs to exactly one level. Each level is shown three ways: the numeral, the name and a mark. Colour never carries it.</p>
+        <ol class="levels" id="levels"></ol>
+      </section>
+
+      <section class="about__s" aria-labelledby="b-h">
+        <h2 class="entry__sh" id="b-h">Six basis labels</h2>
+        <p class="entry__note">Levels describe claims. Basis labels describe where a rule, field, mechanism or role comes from.</p>
+        <dl class="bases" id="bases"></dl>
+      </section>
+
+      <section class="about__s" aria-labelledby="src-h">
+        <h2 class="entry__sh" id="src-h">Evidence sources in the model</h2>
+        <dl class="bases">
+          <div><dt>Call records <span class="ref">E1</span></dt><dd>Charging records from the serving call-control node, outgoing and incoming. Field model from ETSI TS 132 260 Table 6.1.3.3.1; every value synthetic.</dd></div>
+          <div><dt>International gateway records <span class="ref">E2</span></dt><dd>Charging records at the network border, per route. Field model from ETSI TS 132 260 Table 6.1.3.10.1. How the traffic arrives is an assumption of the model.</dd></div>
+          <div><dt>Device information <span class="ref">E3</span></dt><dd>Device-model fingerprints from signalling, never from call records. Method after Oh et al., NDSS 2023; collecting it is an assumption.</dd></div>
+          <div><dt>Subscriber registration <span class="ref">E4</span></dt><dd>Administrative records held by another team, requested by the analyst. Assumption.</dd></div>
+          <div><dt>Radio measurement <span class="ref">E5</span></dt><dd>Distance from the antenna in timing-advance steps of about 78 m. Assumption: it appears in no charging record.</dd></div>
+          <div><dt>Field survey and test call <span class="ref">E6</span></dt><dd>Evidence from outside the analysis. In the demo it is prepared synthetic data.</dd></div>
+          <div><dt>Number-range reference data <span class="ref">E7</span></dt><dd>Tariff and range reference. The need for it is industry practice.</dd></div>
+        </dl>
+      </section>
+
+      <section class="about__s" aria-labelledby="doc-h">
+        <h2 class="entry__sh" id="doc-h">Documents read to build the model</h2>
+        <ul class="docs">
+          <li>ETSI TS 132 260 V19.3.0, charging data records for the IP Multimedia Subsystem. <a href="https://www.etsi.org/deliver/etsi_ts/132200_132299/132260/19.03.00_60/ts_132260v190300p.pdf">etsi.org</a></li>
+          <li>ETSI TS 132 298 V19.6.0, charging data record parameter description. <a href="https://www.etsi.org/deliver/etsi_ts/132200_132299/132298/19.06.00_60/ts_132298v190600p.pdf">etsi.org</a></li>
+          <li>ETSI TS 132 250 V19.0.0, circuit-switched charging. <a href="https://www.etsi.org/deliver/etsi_ts/132200_132299/132250/19.00.00_60/ts_132250v190000p.pdf">etsi.org</a></li>
+          <li>3GPP charging data types, Release 19. <a href="https://forge.3gpp.org/rep/sa5/CH/-/raw/Rel-19/ASN/TS32298_IMSChargingDataTypes.asn">forge.3gpp.org</a></li>
+          <li>ETSI TS 124 229 V19.7.0, call control signalling. <a href="https://www.etsi.org/deliver/etsi_ts/124200_124299/124229/19.07.00_60/ts_124229v190700p.pdf">etsi.org</a></li>
+          <li>ETSI TS 123 501 V19.9.0, system architecture, for the private network code. <a href="https://www.etsi.org/deliver/etsi_ts/123500_123599/123501/19.09.00_60/ts_123501v190900p.pdf">etsi.org</a></li>
+          <li>ETSI TS 136 213 V19.5.0, radio physical layer procedures, for the timing-advance step. <a href="https://www.etsi.org/deliver/etsi_ts/136200_136299/136213/19.05.00_60/ts_136213v190500p.pdf">etsi.org</a></li>
+          <li>Oh et al., Preventing SIM Box Fraud Using Device Model Fingerprinting, NDSS 2023. <a href="https://www.ndss-symposium.org/wp-content/uploads/2023-416-paper.pdf">ndss-symposium.org</a></li>
+          <li>Telco Fraud Whitepaper, vendor material, read as industry practice. <a href="https://www.bics.com/wp-content/uploads/2022/02/Telco-Fraud-Whitepaper.pdf">vendor site</a></li>
+          <li>Natural Earth terms of use. <a href="https://www.naturalearthdata.com/about/terms-of-use/">naturalearthdata.com</a></li>
+        </ul>
+      </section>
+
+      <section class="about__s" aria-labelledby="lic-h">
+        <h2 class="entry__sh" id="lic-h">Licences</h2>
+        <dl class="bases">
+          <div><dt>Newsreader</dt><dd>SIL Open Font License 1.1. <a href="https://github.com/productiontype/Newsreader">github.com/productiontype/Newsreader</a></dd></div>
+          <div><dt>IBM Plex Mono</dt><dd>SIL Open Font License 1.1. <a href="https://github.com/IBM/plex">github.com/IBM/plex</a></dd></div>
+          <div><dt>Qatar outline</dt><dd>Natural Earth 1:10m, public domain.</dd></div>
+          <div><dt>GSAP</dt><dd>Standard "No Charge" GSAP License. <a href="https://gsap.com/standard-license">gsap.com/standard-license</a></dd></div>
+          <div><dt>Lenis</dt><dd>MIT. Installed with the project; not loaded by the console.</dd></div>
+          <div><dt>d3-geo</dt><dd>ISC. Used at build time only, to project the outline.</dd></div>
+        </dl>
+      </section>
+    </main>
+    <footer class="foot entry__foot">
+      <p class="simulated handling handling--bottom">SIMULATED // EXERCISE DATA</p>
+      <p class="foot__about">A telecom fraud intelligence platform built from published research. This demo runs on synthetic data and is not connected to any operator. Not yet reviewed by telecom practitioners.</p>
+      <a class="foot__link" href="/">Home</a>
+    </footer>
+  </body>
+</html>

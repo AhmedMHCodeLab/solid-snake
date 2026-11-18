@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SOLID SNAKE</title>
+    <meta name="description" content="A telecom fraud intelligence platform built from published research. This demo runs on synthetic data and is not connected to any operator. Not yet reviewed by telecom practitioners." />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="../node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2" />
+    <script>
+      try { var t = localStorage.getItem('ss-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+    </script>
+    <script type="module" src="/src/home/main.ts"></script>
+  </head>
+  <body class="entry">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="entry__bar">
+      <span class="brand"><span class="brand__name">Solid Snake</span><span class="brand__case">Telecom fraud intelligence</span></span>
+      <p class="simulated handling handling--top">SIMULATED // EXERCISE DATA</p>
+      <a class="entry__link" href="/about/">Method and sources</a>
+    </header>
+    <main id="main" class="entry__main">
+      <section class="entry__hero" aria-labelledby="h">
+        <p class="entry__k">Fraud intelligence platform</p>
+        <h1 class="entry__h" id="h">From a detected anomaly to a signed finding, with the evidence for every step.</h1>
+        <p class="entry__lede">Call records are ingested and checked against detection rules. When a rule fires, an analyst opens a case, asks each source for evidence and tests the competing explanations. The platform shows what the records prove, what they only suggest, and what is still missing, so nobody acts on suspicion alone.</p>
+      </section>
+      <section class="entry__method" aria-labelledby="m-h">
+        <h2 class="entry__sh" id="m-h">Every claim carries its level</h2>
+        <ol class="levels" id="levels"></ol>
+        <p class="entry__note">Only a level 5 finding, verified by evidence from outside the analysis, can be signed. A supervisor who is a different user must countersign before anything is referred. Every action is written to a hash-chained audit trail.</p>
+      </section>
+      <section class="entry__signin" aria-labelledby="s-h">
+        <h2 class="entry__sh" id="s-h">Sign in to the demo workspace</h2>
+        <p class="entry__note">Demo accounts only. Each browser gets its own workspace, which you can reset from the console.</p>
+        <ul class="users" id="users"></ul>
+        <p class="entry__err" id="err" hidden></p>
+      </section>
+    </main>
+    <footer class="foot entry__foot">
+      <p class="simulated handling handling--bottom">SIMULATED // EXERCISE DATA</p>
+      <p class="foot__about">A telecom fraud intelligence platform built from published research. This demo runs on synthetic data and is not connected to any operator. Not yet reviewed by telecom practitioners.</p>
+      <a class="foot__link" href="/about/">About</a>
+    </footer>
+  </body>
+</html>
