@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  pull_request: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # --------------------------------------------------------------------------
+  # 1. App tests
+  # --------------------------------------------------------------------------
+  app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+  # --------------------------------------------------------------------------
+  # 2. Terraform format, validate, lint, security scan (no Azure login)
+  # --------------------------------------------------------------------------
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.17.2
+
+      - name: Format
+        run: terraform fmt -check -recursive infra
+
+      - name: Validate platform
+        run: |
+          terraform -chdir=infra/platform init -backend=false
+          terraform -chdir=infra/platform validate
+
+      - name: Validate bootstrap
+        run: |
+          terraform -chdir=infra/bootstrap init -backend=false
+          terraform -chdir=infra/bootstrap validate
+
+      - uses: terraform-linters/setup-tflint@6ffdbaa3be476b3431f7275c26966ef32ff60337 # v6.3.2
+
+      - name: TFLint
+        run: |
+          tflint --init
+          tflint --recursive --chdir=infra
+
+      - name: Checkov
+        uses: bridgecrewio/checkov-action@3f0caf0c3aa9f56ade6b49f6e60b63aaeafb75a3 # v12.3141.0
+        with:
+          directory: infra/
+          config_file: infra/.checkov.yaml

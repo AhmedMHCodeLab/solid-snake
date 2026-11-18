@@ -1,0 +1,108 @@
+﻿name: Infrastructure Up
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to deploy
+        type: choice
+        options: [dev, staging, prod]
+        required: true
+      image_digest:
+        description: Image digest from the build summary (sha256:...)
+        type: string
+        required: true
+
+permissions:
+  id-token: write # OIDC token exchange
+  contents: read
+
+concurrency:
+  group: terraform-infra
+  cancel-in-progress: false
+
+env:
+  ENV:                 ${{ inputs.environment }}
+  IMAGE_DIGEST:        ${{ inputs.image_digest }}
+  ARM_USE_OIDC:       "true"
+  ARM_CLIENT_ID:       ${{ vars.AZURE_CLIENT_ID }}
+  ARM_TENANT_ID:       ${{ vars.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+defaults:
+  run:
+    working-directory: infra
+
+jobs:
+  # --------------------------------------------------------------------------
+  # 1. Plan and upload the plan file
+  # --------------------------------------------------------------------------
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
+        with:
+          client-id:       ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id:       ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.17.2
+
+      - name: Init
+        run: terraform init -backend-config="env/${ENV}.backend.hcl" -backend-config="storage_account_name=${{ vars.TFSTATE_STORAGE_ACCOUNT }}"
+
+      - name: Plan
+        run: terraform plan -var-file="env/${ENV}.tfvars" -var="image_digest=$IMAGE_DIGEST" -out=tfplan
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: tfplan
+          path: infra/tfplan
+          retention-days: 1
+
+  # --------------------------------------------------------------------------
+  # 2. Approval gate, apply, approve the Front Door private link
+  # --------------------------------------------------------------------------
+  apply:
+    needs: plan
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
+        with:
+          client-id:       ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id:       ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.17.2
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: tfplan
+          path: infra
+
+      - name: Init
+        run: terraform init -backend-config="env/${ENV}.backend.hcl" -backend-config="storage_account_name=${{ vars.TFSTATE_STORAGE_ACCOUNT }}"
+
+      - name: Apply
+        run: terraform apply tfplan
+
+      - name: Approve Front Door private link
+        run: |
+          env_id=$(terraform output -raw container_app_environment_id)
+          for id in $(az network private-endpoint-connection list --id "$env_id" --query "[?properties.privateLinkServiceConnectionState.status=='Pending'].id" -o tsv); do
+            az network private-endpoint-connection approve --id "$id" --description "Approved by infra-up"
+          done
+
+      - name: URL to summary
+        run: |
+          echo "### ${ENV} is up" >> "$GITHUB_STEP_SUMMARY"
+          terraform output -raw url >> "$GITHUB_STEP_SUMMARY"
