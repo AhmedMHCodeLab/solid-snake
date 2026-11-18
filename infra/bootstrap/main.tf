@@ -8,6 +8,11 @@ resource "random_string" "suffix" {
   upper   = false
 }
 
+# The provider's registration list did not register it; the platform's diagnostic settings need it and CI cannot register providers.
+resource "azurerm_resource_provider_registration" "insights" {
+  name = "Microsoft.Insights"
+}
+
 resource "azurerm_resource_group" "core" {
   name     = "rg-${var.project_name}-core"
   location = var.location
