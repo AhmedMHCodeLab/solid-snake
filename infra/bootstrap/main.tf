@@ -81,18 +81,18 @@ resource "azurerm_role_assignment" "app_acr_pull" {
 }
 
 resource "azurerm_role_assignment" "app_kv_secrets" {
-  for_each = azurerm_resource_group.env
+  for_each = var.environments
 
-  scope                = each.value.id
+  scope                = azurerm_resource_group.env[each.key].id
   role_definition_name = "Key Vault Secrets User"
   principal_id         = azurerm_user_assigned_identity.app.principal_id
 }
 
 resource "azurerm_consumption_budget_resource_group" "env" {
-  for_each = azurerm_resource_group.env
+  for_each = var.environments
 
   name              = "budget-${each.key}"
-  resource_group_id = each.value.id
+  resource_group_id = azurerm_resource_group.env[each.key].id
   amount            = var.budget_amount
 
   time_period {

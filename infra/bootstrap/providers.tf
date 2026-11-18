@@ -15,3 +15,8 @@ provider "azurerm" {
 
   features {}
 }
+
+# Token comes from the GITHUB_TOKEN environment variable.
+provider "github" {
+  owner = split("/", var.github_repository)[0]
+}

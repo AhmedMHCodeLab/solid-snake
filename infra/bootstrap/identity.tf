@@ -26,9 +26,9 @@ resource "azurerm_federated_identity_credential" "env" {
 }
 
 resource "azurerm_role_assignment" "ci_env_contributor" {
-  for_each = azurerm_resource_group.env
+  for_each = var.environments
 
-  scope                = each.value.id
+  scope                = azurerm_resource_group.env[each.key].id
   role_definition_name = "Contributor"
   principal_id         = azurerm_user_assigned_identity.ci.principal_id
 }
