@@ -36,6 +36,8 @@ Actions, Infrastructure Up, Run workflow. Pick `environment`, paste `image_diges
 
 The job approves the Front Door private link and writes the URL to the summary.
 
+Dev runs with `front_door_enabled = false` in `infra/env/dev.tfvars` while the subscription has no Front Door Premium quota. The app is then served on its Container Apps address (public ingress, no WAF) and the checks in step 4 for the default domain and WAF do not apply. Remove that line once the quota is granted.
+
 ## 4. Verify
 
 ```bash
