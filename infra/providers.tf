@@ -1,13 +1,6 @@
 provider "azurerm" {
+  # Bootstrap registers the providers once; the CI identity has no subscription-level rights.
   resource_provider_registrations = "none"
-  resource_providers_to_register = [
-    "Microsoft.App",
-    "Microsoft.Cdn",
-    "Microsoft.KeyVault",
-    "Microsoft.Network",
-    "Microsoft.OperationalInsights",
-    "Microsoft.Storage",
-  ]
 
   features {
     key_vault {
