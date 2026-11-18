@@ -55,12 +55,5 @@ jobs:
       - name: Init
         run: terraform init -backend-config="env/${ENV}.backend.hcl" -backend-config="storage_account_name=${{ vars.TFSTATE_STORAGE_ACCOUNT }}"
 
-      # One-time: state written before the secret became an action still holds it, and ARM cannot delete secrets. Remove once dev is destroyed.
-      - name: Forget the legacy signing key secret
-        run: |
-          if terraform state list | grep -qx 'module.keyvault.azapi_resource.signing_key'; then
-            terraform state rm module.keyvault.azapi_resource.signing_key
-          fi
-
       - name: Destroy
         run: terraform destroy -auto-approve -var-file="env/${ENV}.tfvars" -var="acr_name=${{ vars.ACR_NAME }}" -var="image_digest=sha256:0000000000000000000000000000000000000000000000000000000000000000"
