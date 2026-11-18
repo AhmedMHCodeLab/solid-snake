@@ -19,6 +19,9 @@ skip-check:
   - CKV2_AZURE_38
   - CKV_AZURE_110
   - CKV_AZURE_42
+  # The repo is public on purpose and holds only synthetic data; branch protection needs main to exist, so add it after the first push
+  - CKV_GIT_1
+  - CKV2_GIT_1
   # Registry is Basic: these need Premium; images are scanned by Trivy in build.yml and pulled by identity (ADR 0009)
   - CKV_AZURE_139
   - CKV_AZURE_163
