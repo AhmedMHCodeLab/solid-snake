@@ -1,0 +1,7 @@
+Source: Natural Earth, Admin 0 - Countries, 1:10m scale (ne_10m_admin_0_countries.geojson).
+Retrieved from: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_admin_0_countries.geojson
+Scale: 1:10m (the finest Natural Earth scale; the Qatar feature is one polygon of 241 points).
+Date retrieved: 2026-11-16
+Extract: the single feature with ADM0_A3 = QAT; geometry plus the properties ADM0_A3, NAME, NAME_LONG, ISO_A2. Nothing else was changed.
+Use in SOLID SNAKE: the outline of the national plate only. No tiles, roads, place names or infrastructure are taken from any source.
+Licence: Public domain, Natural Earth terms of use: https://www.naturalearthdata.com/about/terms-of-use/
